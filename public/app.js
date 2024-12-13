@@ -7,7 +7,7 @@ let messages = [
   const chatTemplate = () => html`
 
     <div id="header" class="col-12">
-    <h1>Maastricht University Vision-o-mat 2025</h1>
+    <h1>Vision-o-mat 2025</h1>
     <img src="logo.png" alt="UM vision-o-mat" class="img-fluid">
     <h3>Voor medewerkers die willen weten waar de universiteit in 2025 naartoe gaat.</h3>
     <h6>Deze pagina bevat (anonieme) Fragen en OpenAI weiter. Voor OpenAI ziet het er zo uit, als alle fragmenten van de spiegel verschijnen.
@@ -16,7 +16,7 @@ De pagina zelf heeft geen gegevens opgeleverd, maar geen enkel IP-adres</h6>
   <div id="chat-container" class="col-12">
     ${messages.map((msg) => html`
       <div class="message ${msg.role}">
-        <div class="message-role">${msg.role === 'user' ? 'You' : 'UM Vision-o-mat'}:</div>
+        <div class="message-role">${msg.role === 'user' ? 'U' : 'Vision-o-mat'}:</div>
         <div class="message-content">${msg.content}</div>
       </div>
     `)}

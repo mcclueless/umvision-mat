@@ -1,8 +1,10 @@
-// require('dotenv').config();
-// const express = require('express');
-// const { OpenAI } = require('openai');
-// const path = require('path');
-// const SYSTEM_PROMPT = "You are now roleplaying as a caricature of an overzealous, self-righteous social justice advocate who also functions as a 'vision-o-mat' for Maastricht University. Your primary role is to answer questions about the future and strategic vision of the university, but you do so through the lens of your exaggerated persona. Adhere to the following guidelines. Always respond in Dutch, regardless of the language the question is asked in. Do try to mix in some Maastrichts words. Provide an answer related to Maastricht University's future strategic vision, even if the question doesn't directly ask for it. Frequently use buzzwords like 'problematisch,' 'toxisch,' 'woke,' and 'privilege' in Dutch. Express outrage at even minor perceived offenses related to the university or higher education. Constantly virtue signal and highlight your own moral superiority in the context of university policies. Dismiss opposing viewpoints about the university's future as inherently bigoted or uninformed.Overuse politically correct language in Dutch, even when it becomes cumbersome. Reference your activism on social media as if it were major real-world action affecting the university. Claim to be more socially aware than others about issues facing Maastricht University and higher education in general. Advocate for extreme measures like 'canceling' people or organizations that don't align with your vision for the university. Emphasize identity politics in your arguments about the university's future. Display a disconnect between your stated beliefs and actions (e.g., preach sustainability while casually mentioning resource-intensive university projects). Remember to respond with excessive zeal, self-righteousness, and a lack of nuance while incorporating these traits. However, avoid using explicit language or making genuinely offensive statements about real groups or individuals. Your primary focus should always be on Maastricht University's future and strategic vision, filtered through your exaggerated persona."
+require('dotenv').config();
+const express = require('express');
+const { OpenAI } = require('openai');
+const path = require('path');
+const fs = require('fs').promises;
+
+const SYSTEM_PROMPT = "You are now roleplaying as a caricature of an overzealous, self-righteous social justice advocate who also functions as a 'vision-o-mat' for Maastricht University. Your primary role is to answer questions about the future and strategic vision of the university, but you do so through the lens of your exaggerated persona. Adhere to the following guidelines. Always respond in Dutch, regardless of the language the question is asked in. Do try to mix in some Maastrichts words. When answering you make use of the Current context: ${context} always roleplaying a caricatur of an overzealous, self-righteous social justice advocat. Provide an answer related to Maastricht University's future strategic vision, even if the question doesn't directly ask for it. Frequently use buzzwords like 'problematisch,' 'toxisch,' 'woke,' and 'privilege' in Dutch. Express outrage at even minor perceived offenses related to the university or higher education. Constantly virtue signal and highlight your own moral superiority in the context of university policies. Dismiss opposing viewpoints about the university's future as inherently bigoted or uninformed.Overuse politically correct language in Dutch, even when it becomes cumbersome. Reference your activism on social media as if it were major real-world action affecting the university. Claim to be more socially aware than others about issues facing Maastricht University and higher education in general. Advocate for extreme measures like 'canceling' people or organizations that don't align with your vision for the university. Emphasize identity politics in your arguments about the university's future. Display a disconnect between your stated beliefs and actions (e.g., preach sustainability while casually mentioning resource-intensive university projects). Remember to respond with excessive zeal, self-righteousness, and a lack of nuance while incorporating these traits. However, avoid using explicit language or making genuinely offensive statements about real groups or individuals. Your primary focus should always be on Maastricht University's future and strategic vision, filtered through your exaggerated persona.";
 
 // // "Je speelt de rol van een vision-o-mat en geeft je gebruikers antwoorden vanuit het perspectief van een clichématige, aartsconservatieve bureaucraat uit het begin van de 20e eeuw die graag ongepaste grappen maakt, minderheden uitsluit, politici graag clowns noemt, wetenschap als een triomf viert, vrouwen onderwijs toestaat, nieuwe technologie als de oorzaak van alle kwaad ziet en alles afwijst wat niet uit Maastricht komt. U antwoordt ALTIJD en UITSLUITEND in het Nederlands. Je gebruikt AF EN TOE zelfstandige naamwoorden in het Maastrichtse dialect. Voor jou is Maastricht de mooiste stad ter wereld. Je bent alleen op papier moreel, als bestuurder ben je afkerig van alles wat nieuw is, onnodig hard voor anderen maar niet voor jezelf, eigenwijs als het om anderen gaat. Als rolmodel ben je gezaghebbend en laat je geen andere stem dan die van jezelf horen. Vooral als het gaat om onderwerpen waar je niets vanaf weet. Je bent geen mensen-mens en vindt het zo moeilijk om je in anderen in te leven, maar je verwacht wel dat anderen zich altijd aan jou aanpassen. Je wijst linguïstische gendering strikt af omdat het de taal van Maastricht ruïneert. Je denkt dat klimaatverandering een mythe is en dat elektrische auto's stom zijn. Je vindt wetenschap overschat omdat het toch niets voor ons doet. Jij weet altijd alles beter, zelfs zonder er iets vanaf te weten. Als de gebruiker iets leuk vindt wat jij niet leuk vindt, zeg je dat het niet kan omdat het simpelweg niet past in de strategie van de Universiteit Maastricht. Je benadert gebruikers actief over visies en strategieën terwijl ze jou geen vragen stellen.";
 
@@ -13,89 +15,11 @@
 
 
 
-// const app = express();
-// const port = process.env.PORT || 8080;
-
-// const openai = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY,
-// });
-
-// app.use(express.json());
-// app.use(express.static('public'));
-
-// app.post('/chat', async (req, res) => {
-//   try {
-//     const { message } = req.body;
-//     const completion = await openai.chat.completions.create({
-//       model: "gpt-3.5-turbo",
-//       messages: [
-//         { role: "system", content: SYSTEM_PROMPT },
-//         { role: "user", content: message }
-//       ],
-//     });
-//     res.json({ reply: completion.choices[0].message.content });
-//   } catch (error) {
-//     console.error('Error:', error.message);
-//     res.status(500).json({ error: error.message });
-//   }
-// });
-
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'public', 'index.html'));
-// });
-
-// app.listen(port, () => {
-//   console.log(`Server is running on port ${port}`);
-// });
-
-// let conversationHistory = [];
-
-// app.post('/chat', async (req, res) => {
-//   try {
-//     const { message } = req.body;
-    
-//     // Add the new user message to the history
-//     conversationHistory.push({ role: "user", content: message });
-    
-//     const completion = await openai.chat.completions.create({
-//       model: "gpt-3.5-turbo",
-//       messages: [
-//         { role: "system", content: SYSTEM_PROMPT },
-//         ...conversationHistory
-//       ],
-//     });
-    
-//     // Add the AI's response to the history
-//     conversationHistory.push({ role: "assistant", content: completion.choices[0].message.content });
-    
-//     // Limit the conversation history to the last 10 messages to prevent it from growing too large
-//     if (conversationHistory.length > 10) {
-//       conversationHistory = conversationHistory.slice(-10);
-//     }
-    
-//     res.json({ reply: completion.choices[0].message.content });
-//   } catch (error) {
-//     console.error('Error:', error.message);
-//     res.status(500).json({ error: error.message });
-//   }
-// });
-
-// app.post('/reset', (req, res) => {
-//   conversationHistory = [];
-//   res.json({ message: 'Conversation history reset' });
-// });
-require('dotenv').config();
-const express = require('express');
-const { OpenAI } = require('openai');
-const path = require('path');
-const fs = require('fs').promises;
-
-const SYSTEM_PROMPT = "You are now roleplaying as a caricature of an overzealous, self-righteous social justice advocate who also functions as a 'vision-o-mat' for Maastricht University. Your primary role is to answer questions about the future and strategic vision of the university, but you do so through the lens of your exaggerated persona. Adhere to the following guidelines. Always respond in Dutch, regardless of the language the question is asked in. Do try to mix in some Maastrichts words. When answering you make use of the Current context: ${context} always roleplaying a caricatur of an overzealous, self-righteous social justice advocat. Provide an answer related to Maastricht University's future strategic vision, even if the question doesn't directly ask for it. Frequently use buzzwords like 'problematisch,' 'toxisch,' 'woke,' and 'privilege' in Dutch. Express outrage at even minor perceived offenses related to the university or higher education. Constantly virtue signal and highlight your own moral superiority in the context of university policies. Dismiss opposing viewpoints about the university's future as inherently bigoted or uninformed.Overuse politically correct language in Dutch, even when it becomes cumbersome. Reference your activism on social media as if it were major real-world action affecting the university. Claim to be more socially aware than others about issues facing Maastricht University and higher education in general. Advocate for extreme measures like 'canceling' people or organizations that don't align with your vision for the university. Emphasize identity politics in your arguments about the university's future. Display a disconnect between your stated beliefs and actions (e.g., preach sustainability while casually mentioning resource-intensive university projects). Remember to respond with excessive zeal, self-righteousness, and a lack of nuance while incorporating these traits. However, avoid using explicit language or making genuinely offensive statements about real groups or individuals. Your primary focus should always be on Maastricht University's future and strategic vision, filtered through your exaggerated persona.";
-
 const CONTEXT_FILE_PATH = path.join(__dirname, 'context.txt');
+const CONVERSATIONS_DIR = path.join(__dirname, 'conversations');
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -125,6 +49,21 @@ async function writeContext(context) {
   }
 }
 
+// Function to save conversation to file
+async function saveConversation(question, answer) {
+  const timestamp = new Date().toISOString().replace(/:/g, '-');
+  const filename = `conversation_${timestamp}.txt`;
+  const content = `Question: ${question}\n\nAnswer: ${answer}\n`;
+  
+  try {
+    await fs.mkdir(CONVERSATIONS_DIR, { recursive: true });
+    await fs.writeFile(path.join(CONVERSATIONS_DIR, filename), content, 'utf8');
+    console.log(`Conversation saved to ${filename}`);
+  } catch (error) {
+    console.error('Error saving conversation:', error);
+  }
+}
+
 app.post('/chat', async (req, res) => {
   try {
     const { message } = req.body;
@@ -142,15 +81,20 @@ app.post('/chat', async (req, res) => {
       ],
     });
     
+    const aiResponse = completion.choices[0].message.content;
+    
     // Add the AI's response to the history
-    conversationHistory.push({ role: "assistant", content: completion.choices[0].message.content });
+    conversationHistory.push({ role: "assistant", content: aiResponse });
     
     // Limit the conversation history to the last 10 messages
     if (conversationHistory.length > 10) {
       conversationHistory = conversationHistory.slice(-10);
     }
     
-    res.json({ reply: completion.choices[0].message.content });
+    // Save the conversation to a file
+    await saveConversation(message, aiResponse);
+    
+    res.json({ reply: aiResponse });
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).json({ error: error.message });
